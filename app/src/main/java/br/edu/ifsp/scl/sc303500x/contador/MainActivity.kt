@@ -9,38 +9,34 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.widget.addTextChangedListener
+import br.edu.ifsp.scl.sc303500x.contador.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var initialEt: EditText
-    private lateinit var visorTv: TextView
-    private lateinit var  incrementBt: Button
-    private lateinit var resetBt: Button
-    private var incrementValue: Int = 0
+    private val activityMainBinding: ActivityMainBinding by lazy {
+        ActivityMainBinding.inflate(layoutInflater)
+    }
+
+    private var value: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        setContentView(activityMainBinding.root)
 
-        initialEt =findViewById(R.id.initial_et)
-        visorTv = findViewById(R.id.visor_tv)
-        incrementBt = findViewById(R.id.increment_bt)
-        resetBt = findViewById(R.id.reset_bt)
-
-        incrementBt.setOnClickListener(
-            object : View.OnClickListener{
-                override fun onClick(v: View?) {
-                    incrementValue++
-                    visorTv.setText(incrementValue.toString())
-                }
-
-            })
-        resetBt.setOnClickListener(
-            object  :View.OnClickListener{
-                override fun onClick(v: View?) {
-                    incrementValue = 0
-                    visorTv.setText(incrementValue.toString())
-                }
+        with(activityMainBinding) {
+            activityMainBinding.initialEt.addTextChangedListener {
+                value = it.toString().toIntOrNull() ?: 0
             }
-        )
+
+            activityMainBinding.incrementBt.setOnClickListener {
+                (++value).let { activityMainBinding.visorTv.text = it.toString() }
+            }
+
+            activityMainBinding.resetBt.setOnClickListener {
+                value = 0
+                value.toString().let { activityMainBinding.visorTv.text = it }
+            }
+        }
     }
 }
